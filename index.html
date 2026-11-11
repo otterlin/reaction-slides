@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>國中自然第一冊｜反應時間的測定、統計與討論（互動教學簡報）</title>
+  <style>
+    :root {
+      --bg-dark: #0b1120;
+      --bg-card: rgba(30, 41, 59, 0.88);
+      --border-light: rgba(148, 163, 184, 0.22);
+      --accent-cyan: #38bdf8;
+      --accent-green: #4ade80;
+      --accent-amber: #facc15;
+      --accent-red: #f87171;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: radial-gradient(circle at 50% 20%, #172554 0%, #0b1120 70%);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Navigation Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 24px;
+      background: rgba(11, 17, 32, 0.92);
+      border-bottom: 1px solid var(--border-light);
+      z-index: 30;
+    }
+
+    .top-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--accent-cyan);
+    }
+
+    .slide-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .dot.active {
+      width: 28px;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    }
+
+    .nav-btns {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-light);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-nav:hover {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: var(--accent-cyan);
+    }
+
+    /* Slide Viewport */
+    .deck {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 32px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(40px);
+      transition: opacity 0.32s ease, transform 0.32s ease;
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .slide-inner {
+      max-width: 1220px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .tag-pill {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      margin-bottom: 10px;
+    }
+
+    .slide-title {
+      font-size: clamp(1.6rem, 2.8vw, 2.35rem);
+      font-weight: 800;
+      margin-bottom: 20px;
+      line-height: 1.25;
+      color: #ffffff;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 22px 24px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(10px);
+    }
+
+    .card.cyan { border-top: 4px solid var(--accent-cyan); }
+    .card.green { border-top: 4px solid var(--accent-green); }
+    .card.amber { border-top: 4px solid var(--accent-amber); }
+    .card.red { border-top: 4px solid var(--accent-red); }
+
+    .card h3 {
+      font-size: 1.22rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card.cyan h3 { color: var(--accent-cyan); }
+    .card.green h3 { color: var(--accent-green); }
+    .card.amber h3 { color: var(--accent-amber); }
+    .card.red h3 { color: var(--accent-red); }
+
+    .card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .card li {
+      font-size: 1rem;
+      line-height: 1.55;
+      color: #e2e8f0;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .card li::before {
+      content: "•";
+      position: absolute;
+      left: 2px;
+      color: var(--accent-cyan);
+      font-weight: bold;
+    }
+
+    /* Pathway Flowchart */
+    .pathway-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .path-node {
+      background: rgba(15, 23, 42, 0.85);
+      border: 2px solid var(--accent-cyan);
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+      position: relative;
+    }
+
+    .path-node.center-node {
+      border-color: var(--accent-amber);
+      background: rgba(250, 204, 21, 0.08);
+    }
+
+    .path-node.motor-node {
+      border-color: var(--accent-green);
+      background: rgba(74, 222, 128, 0.08);
+    }
+
+    .path-node .step-num {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .path-node .step-icon {
+      font-size: 1.8rem;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .path-node strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+
+    .path-node span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Interactive Tools inside Slides */
+    .tool-box {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 10px 0;
+    }
+
+    .slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent-cyan);
+    }
+
+    .big-stat {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--accent-green);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-launch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 16px rgba(56, 189, 248, 0.4);
+      transition: transform 0.15s;
+    }
+
+    .btn-launch.green-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-launch:hover {
+      transform: translateY(-2px);
+    }
+
+    .qr-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .qr-img {
+      width: 96px;
+      height: 96px;
+      border-radius: 8px;
+      background: #fff;
+      padding: 4px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .pathway-row { grid-template-columns: repeat(2, 1fr); }
+      .slide { padding: 20px; justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="top-brand">
+      <span>🧬 國中自然第一冊｜4-1 反應時間的測定、統計與討論</span>
+    </div>
+    <div class="slide-dots" id="slideDots"></div>
+    <div class="nav-btns">
+      <span id="pageIndicator" style="font-size:0.85rem; color:var(--text-muted); margin-right:6px;">1 / 10</span>
+      <button class="btn-nav" id="prevBtn">◀ 上一頁</button>
+      <button class="btn-nav" id="nextBtn">下一頁 ▶</button>
+      <button class="btn-nav" id="fsBtn" title="全螢幕簡報">⛶ 全螢幕</button>
+    </div>
+  </div>
+
+  <div class="deck" id="deck">
+
+    <!-- Slide 1: Cover -->
+    <section class="slide active">
+      <div class="slide-inner">
+        <span class="tag-pill">國中自然科學第一冊 • 第 4 章 生物的協調作用</span>
+        <h1 class="slide-title" style="font-size:clamp(2rem, 3.6vw, 3rem); margin-bottom:14px;">
+          實驗 4-1-1：反應時間的測定、統計與討論
+        </h1>
+        <p style="font-size:1.15rem; color:var(--text-muted); margin-bottom:26px;">
+          結合「教育部因材網自主學習」×「實體接尺實驗」×「平板數位 5 次平均反應測定」之四學探究課程
+        </p>
+
+        <div class="grid-3">
+          <div class="card cyan">
+            <h3>1️⃣ 課前自學與引起動機</h3>
+            <ul>
+              <li>因材網微課：<code>Dc-IV-1-7</code> ～ <code>Dc-IV-1-9</code></li>
+              <li>生活情境：145 km/h 棒球打擊與行車急煞</li>
+              <li>檢核視覺至手部神經傳導途徑</li>
+            </ul>
+          </div>
+          <div class="card green">
+            <h3>2️⃣ 組內共學：5次反應測定</h3>
+            <ul>
+              <li><strong>實體接尺實驗</strong>：自由落體查表換算</li>
+              <li><strong>數位實驗 A</strong>：隨機秒數視覺變色測定</li>
+              <li><strong>數位實驗 B</strong>：神槍手射擊標靶測定</li>
+            </ul>
+          </div>
+          <div class="card amber">
+            <h3>3️⃣ 組間互學與教師導學</h3>
+            <ul>
+              <li>計算 <strong>5 次平均值</strong> 與全班常態分佈圖</li>
+              <li>探討「練習效應」與排查異常數據</li>
+              <li>素養應用：防禦駕駛與安全車距計算</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 2: Motivation -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="tag-pill">階段一｜引起動機（5 分鐘）</span>
+        <h2 class="slide-title">極限幾分之一秒！大腦與身體如何協調反應？</h2>
+        <div class="grid-2">
+          <div class="card amber">
+            <h3>⚾ 情境一：職棒打擊手的 0.4 秒極限</h3>
+            <ul>
+              <li>投手投出時速 <strong>145 km/h</strong> 快速球，球飛到本壘板僅約 <strong>0.4 秒</strong>！</li>
+              <li>打擊手必須在瞬間完成：<br/>
+                ① <strong>眼睛</strong>看到球飛來（受器接收刺激）<br/>
+                ② <strong>大腦</strong>判斷好壞球與位置（中樞整合）<br/>
+                ③ 下令<strong>手部肌肉</strong>揮棒（動器產生反應）</li>
+              <li>🤔 <strong>思考</strong>：為什麼選手經過千百次練習後，反應速度會比一般人快？</li>
+            </ul>
+          </div>
+          <div class="card red">
+            <h3>🚗 情境二：馬路急煞的生死瞬間</h3>
+            <ul>
+              <li>當汽車以時速 <strong>60 km/h</strong> 行駛，前方突然出現紅燈或行人！</li>
+              <li>從「眼睛看到危險」到「右腳踩下煞車」，神經訊號傳遞需要時間。</li>
+              <li>在這段<strong>反應時間</strong>內，車子完全沒有減速，仍以原速向前衝刺！</li>
+              <li>🤔 <strong>思考</strong>：人類的反應時間大約幾秒？如果邊開車邊看手機，反應距離會暴增多少公尺？</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: Neural Pathway -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="tag-pill">先備知識檢核｜因材網 Dc-IV-1-7</span>
+        <h2 class="slide-title">什麼是「反應時間」？視覺接尺與點擊的神經傳導途徑</h2>
+        <p style="color:#cbd5e1; margin-bottom:14px;">
+          <strong>反應時間定義</strong>：自「受器」接受刺激，經感覺神經元傳至中樞神經整合，再由運動神經元傳至「動器」產生反應所經過的總時間。
+        </p>
+
+        <div class="pathway-row">
+          <div class="path-node">
+            <span class="step-num">STEP 1 • 受器</span>
+            <span class="step-icon">👁️</span>
+            <strong>眼睛（視網膜）</strong>
+            <span>接受視覺光線刺激</span>
+          </div>
+          <div class="path-node">
+            <span class="step-num">STEP 2 • 感覺神經元</span>
+            <span class="step-icon">⚡</span>
+            <strong>視神經（腦神經）</strong>
+            <span>將訊息傳入大腦</span>
+          </div>
+          <div class="path-node center-node">
+            <span class="step-num">STEP 3 • 中樞神經(一)</span>
+            <span class="step-icon">🧠</span>
+            <strong>大腦（意識中樞）</strong>
+            <span>視覺區辨識＋運動區下令</span>
+          </div>
+          <div class="path-node center-node">
+            <span class="step-num">STEP 4 • 中樞神經(二)</span>
+            <span class="step-icon">🦴</span>
+            <strong>脊髓</strong>
+            <span>將大腦指令向下傳遞</span>
+          </div>
+          <div class="path-node motor-node">
+            <span class="step-num">STEP 5 • 運動神經元</span>
+            <span class="step-icon">⚡</span>
+            <strong>脊神經</strong>
+            <span>傳遞命令至手部</span>
+          </div>
+          <div class="path-node motor-node">
+            <span class="step-num">STEP 6 • 動器</span>
+            <span class="step-icon">👆</span>
+            <strong>手部肌肉</strong>
+            <span>收縮捏尺／點擊畫面</span>
+          </div>
+        </div>
+
+        <div class="card red" style="padding:14px 20px;">
+          <h3 style="font-size:1.05rem; margin-bottom:6px;">⚠️ 課前檢核常見迷思提醒</h3>
+          <p style="font-size:0.95rem; color:#f1f5f9;">
+            • <strong>為什麼會經過脊髓？</strong> 因為眼睛在頭部（由腦神經傳入大腦），但運動的<strong>手部肌肉在頸部以下</strong>，大腦命令必須經由<strong>脊髓與脊神經</strong>才能傳到手部！<br/>
+            • <strong>意識行為 vs 反射作用</strong>：接尺與看著螢幕點擊皆由<strong>大腦意識控制</strong>，屬於「意識行為」，可透過練習縮短反應時間！
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Ruler Experiment + Interactive Converter -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="tag-pill">階段二｜組內共學實作（實體接尺）</span>
+        <h2 class="slide-title">方法一：傳統接尺實驗——變因控制與距離換算互動模擬</h2>
+        <div class="grid-2">
+          <div class="card green">
+            <h3>📏 雙人接尺實驗：嚴謹控制變因</h3>
+            <ul>
+              <li><strong>受試者手部位置</strong>：拇指與食指分開約 <code>2 cm</code>，對齊直尺 <code>0 cm</code> 刻度，接尺前<strong>不可碰觸直尺</strong>。</li>
+              <li><strong>主試者放尺隨機性</strong>：手握直尺頂端，<strong>隨機時間放手</strong>，嚴禁倒數「3、2、1」或晃動暗示！</li>
+              <li><strong>連續測定 5 次</strong>：每次讀取拇指上緣刻度，記錄 5 次滑落距離並計算平均值，再互換角色。</li>
+            </ul>
+          </div>
+
+          <div class="card cyan">
+            <h3>📐 自由落體換算器（$h = \frac{1}{2}gt^2$）</h3>
+            <p style="font-size:0.92rem; color:var(--text-muted);">
+              拖動下方滑桿，觀察直尺滑落距離（cm）如何對應反應時間（秒 / ms）：
+            </p>
+            <div class="tool-box">
+              <div class="slider-row">
+                <span>滑落距離：</span>
+                <input type="range" id="rulerSlider" min="5" max="40" step="1" value="20" />
+                <strong id="rulerCmText" style="color:var(--accent-cyan); min-width:65px;">20 cm</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:8px;">
+                <span>對應反應時間：</span>
+                <span class="big-stat" id="rulerTimeText">0.202 秒 (202 ms)</span>
+              </div>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:10px;">
+              💡 思考：接尺時若主試者不小心微動手指被受試者發現，測出來的數據會失真嗎？我們如何用數位工具解決人為暗示誤差？
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5: Digital Game 1 (Color Change) -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="tag-pill">階段二｜數位自主學習實作 A</span>
+        <h2 class="slide-title">方法二：隨機秒數「視覺變色反應時間測定」（5次平均）</h2>
+        <div class="grid-2">
+          <div class="card green">
+            <h3>⚡ 隨機秒數變色實驗設計</h3>
+            <ul>
+              <li><strong>電腦隨機等待秒數（1.50 ～ 4.50 秒）</strong>：點擊開始後畫面呈現<strong>紅色等待狀態</strong>，由系統亂數決定變色秒數，徹底消除人為放尺暗示！</li>
+              <li><strong>瞬間變綠計時</strong>：畫面轉為<strong>綠色</strong>瞬間立即點擊螢幕或按空白鍵，精確記錄毫秒（<code>ms</code>）與秒數。</li>
+              <li><strong>防搶快機制</strong>：未變色前提前點擊會顯示橘色犯規警告並重測該次，確保 5 次數據皆有效。</li>
+            </ul>
+            <a class="btn-launch green-btn" href="https://otterlin.github.io/reaction-color-game/" target="_blank" rel="noopener">
+              🚀 開啟「視覺變色反應時間測定」網站
+            </a>
+          </div>
+
+          <div class="card cyan">
+            <h3>📱 平板掃描或點擊連線實測（測 5 次取平均）</h3>
+            <div class="qr-wrap">
+              <img class="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://otterlin.github.io/reaction-color-game/" alt="變色反應測定 QR Code" />
+              <div>
+                <strong style="color:var(--accent-green); display:block; margin-bottom:4px;">視覺變色反應時間測定</strong>
+                <code style="font-size:0.82rem; color:#cbd5e1; word-break:break-all;">https://otterlin.github.io/reaction-color-game/</code>
+              </div>
+            </div>
+            <ul style="margin-top:14px;">
+              <li>自動記錄<strong>第 1 次 ～ 第 5 次</strong>反應時間與當次隨機等待秒數</li>
+              <li>完成 5 次後自動算出<strong>五次平均值</strong>、<strong>最快/最慢紀錄</strong>與<strong>標準差 (SD)</strong></li>
+              <li>點擊「📋 複製實驗數據」即可將 5 次結果貼上雲端試算表！</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: Digital Game 2 (Shooting Theme) -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="tag-pill">階段二｜數位進階探究實作 B</span>
+        <h2 class="slide-title">方法三：神槍手反射實驗室「射擊反應時間測定」（5次平均）</h2>
+        <div class="grid-2">
+          <div class="card cyan">
+            <h3>🎯 射擊靶場主題：加入空間定位與手眼協調</h3>
+            <ul>
+              <li><strong>隨機延遲 (1.2~3.4秒) ＋ 隨機座標位置</strong>：標靶在靶場隨機位置彈出，受試者不僅要察覺標靶出現，還必須<strong>移動準星瞄準靶心點擊</strong>！</li>
+              <li><strong>雙重數據記錄</strong>：同時測量<strong>出現到點選的反應時間 (ms)</strong> 與 <strong>射擊準度 (6~10環)</strong>。</li>
+              <li><strong>五次測量平均統計</strong>：完成 5 發射擊後自動產生五次平均時間、穩定度標準差、神槍手等級評定與長條圖。</li>
+            </ul>
+            <a class="btn-launch" href="https://otterlin.github.io/reaction-shooting-game/" target="_blank" rel="noopener">
+              🎯 開啟「神槍手射擊反應測定」網站
+            </a>
+          </div>
+
+          <div class="card amber">
+            <h3>🤔 跨實驗比較：為什麼「射擊」比「變色點擊」慢？</h3>
+            <div class="qr-wrap">
+              <img class="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://otterlin.github.io/reaction-shooting-game/" alt="射擊反應測定 QR Code" />
+              <div>
+                <strong style="color:var(--accent-cyan); display:block; margin-bottom:4px;">神槍手射擊反應時間測定</strong>
+                <code style="font-size:0.82rem; color:#cbd5e1; word-break:break-all;">https://otterlin.github.io/reaction-shooting-game/</code>
+              </div>
+            </div>
+            <ul style="margin-top:14px;">
+              <li><strong>全螢幕變色（單純反應）</strong>：手指固定原位，大腦只需判斷「變綠→按下」，5次平均約 <code>180 ～ 250 ms</code>。</li>
+              <li><strong>隨機位置射擊（空間協調反應）</strong>：大腦需先定位座標、加上<strong>小腦協調手部移動瞄準</strong>，因此 5 次平均通常來到 <code>300 ～ 450 ms</code>！</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7: Why 5 Trials & Big Data -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="tag-pill">階段三｜組內統計與組間互學（12 分鐘）</span>
+        <h2 class="slide-title">科學統計思維：為什麼要測 5 次取平均？全班數據長怎樣？</h2>
+        <div class="grid-3">
+          <div class="card cyan">
+            <h3>1️⃣ 降低單次隨機誤差</h3>
+            <ul>
+              <li>只測 1 次可能剛好眨眼、分心或運氣好猜中時機。</li>
+              <li>連續測量 5 次取算術平均數：<br/>
+                $$\bar{T} = \frac{T_1+T_2+T_3+T_4+T_5}{5}$$</li>
+              <li>能消除偶然誤差，代表個人真實反應速度。</li>
+            </ul>
+          </div>
+          <div class="card green">
+            <h3>2️⃣ 檢驗「練習效應」假說</h3>
+            <ul>
+              <li>觀察個人第 1 次到第 5 次的長條圖變化。</li>
+              <li>比較全班「第 1 次平均」vs「第 5 次平均」：多數同學隨著熟練度增加，反應時間呈現下降趨勢！</li>
+            </ul>
+          </div>
+          <div class="card amber">
+            <h3>3️⃣ 全班雲端常態分佈</h3>
+            <ul>
+              <li>將全班 28 人（共 140 次測定）匯集至雲端共享試算表。</li>
+              <li>全班平均反應時間直方圖呈現<strong>中間高、兩側低的常態分佈</strong>，並可客觀找出異常值進行討論。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 8: 3 Core Discussion Topics -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="tag-pill">階段四｜科學深度討論（小組小白板論證）</span>
+        <h2 class="slide-title">從實驗數據找證據：三大核心探究討論議題</h2>
+        <div class="grid-3">
+          <div class="card green">
+            <h3>💡 議題一：練習效應機制</h3>
+            <ul>
+              <li><strong>問題</strong>：為什麼多數人第 5 次比第 1 次快？</li>
+              <li><strong>科學推論（Dc-IV-1-8）</strong>：接尺與螢幕點擊皆屬於<strong>大腦控制的意識行為</strong>。經過重複刺激與操作，大腦神經傳導與肌肉協調更順暢，因此能縮短反應時間。</li>
+            </ul>
+          </div>
+          <div class="card red">
+            <h3>🔍 議題二：異常數據排查</h3>
+            <ul>
+              <li><strong>問題</strong>：為什麼有同學第 5 次反而突然變慢（例如超過 400 ms）？</li>
+              <li><strong>批判思辨（tc-IV-1）</strong>：可能是眼睛盯螢幕疲勞、注意力渙散、或前一次搶快犯規後過度謹慎。</li>
+              <li><strong>科學態度</strong>：真實記錄並分析原因，絕不竄改數據！</li>
+            </ul>
+          </div>
+          <div class="card amber">
+            <h3>🎧 議題三：視覺 vs 聽覺延伸</h3>
+            <ul>
+              <li><strong>問題</strong>：若改為「閉眼聽聲音點擊或接尺」，反應時間會如何改變？</li>
+              <li><strong>探究設計</strong>：自變數為「刺激感官種類（視覺 vs 聽覺）」，應變數為「5次平均反應時間」，控制變因為同一受試者與相同點擊動作。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 9: Interactive Traffic Safety Simulator -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="tag-pill">素養導學｜交通安全與生命教育</span>
+        <h2 class="slide-title">多出 0.6 秒的致命代價：反應時間 × 行車安全距離模擬器</h2>
+        <div class="grid-2">
+          <div class="card red">
+            <h3>🚗 為什麼開車、過馬路絕對不能低頭滑手機？</h3>
+            <ul>
+              <li>汽車在市區以時速 <strong>60 km/h（每秒前進 16.7 公尺）</strong> 行駛。</li>
+              <li><strong>專注駕駛（反應時間 0.2 秒）</strong>：<br/>
+                踩下煞車前車輛已衝出 <code>16.7 × 0.2 ＝ 3.34 公尺</code>。</li>
+              <li><strong>分心看手機 / 疲勞駕駛（反應時間延長至 0.8 秒）</strong>：<br/>
+                踩下煞車前車輛暴衝 <code>16.7 × 0.8 ＝ 13.36 公尺</code>！</li>
+              <li>還沒開始煞車就<strong>多衝了 10 公尺（超過兩輛休旅車長）</strong>！</li>
+            </ul>
+          </div>
+
+          <div class="card amber">
+            <h3>🧮 互動模擬：調整你的反應時間與車速</h3>
+            <div class="tool-box">
+              <div class="slider-row">
+                <span>行車時速：</span>
+                <input type="range" id="speedSlider" min="30" max="110" step="10" value="60" />
+                <strong id="speedValText" style="color:var(--accent-amber); min-width:80px;">60 km/h</strong>
+              </div>
+              <div class="slider-row">
+                <span>反應時間：</span>
+                <input type="range" id="rtSlider" min="150" max="1000" step="50" value="200" />
+                <strong id="rtValText" style="color:var(--accent-cyan); min-width:80px;">200 ms</strong>
+              </div>
+              <div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.12); display:flex; justify-content:space-between; align-items:center;">
+                <span>踩煞車前「反應衝刺距離」：</span>
+                <span class="big-stat" id="brakeDistText" style="color:var(--accent-red);">3.33 公尺</span>
+              </div>
+            </div>
+            <p style="font-size:0.88rem; color:#cbd5e1; margin-top:10px;">
+              💡 將你剛剛在遊戲中測出的「5次平均反應時間」代入上方滑桿，看看你在時速 60 與 100 km/h 下需要多少反應距離！
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 10: Summary & Post-test -->
+    <section class="slide">
+      <div class="slide-inner">
+        <span class="tag-pill">課堂總結與延伸｜2 分鐘</span>
+        <h2 class="slide-title">今日探究總結與課後自主學習任務</h2>
+        <div class="grid-2">
+          <div class="card cyan">
+            <h3>📌 今日三大核心觀念總整理</h3>
+            <ul>
+              <li><strong>神經傳導途徑</strong>：眼(受器) → 視神經 → 大腦 → 脊髓 → 脊神經 → 手部肌肉(動器)，屬於可透過練習縮短時間的<strong>意識行為</strong>。</li>
+              <li><strong>科學方法與統計</strong>：利用隨機秒數消除預判，並透過<strong>連續 5 次測量計算平均值</strong>降低偶然誤差。</li>
+              <li><strong>任務複雜度影響</strong>：空間射擊瞄準所需的腦部整合時間長於單純變色點擊。</li>
+            </ul>
+          </div>
+
+          <div class="card green">
+            <h3>🚀 隨堂檢核與回家延伸探究</h3>
+            <ul>
+              <li><strong>Step 1｜因材網隨堂後測</strong>：開啟平板完成因材網 <code>Dc-IV-1-9</code> 3 題即時評量，檢視個人知識星空圖。</li>
+              <li><strong>Step 2｜自主探究小專題（任選一項實測 5 次平均）</strong>：<br/>
+                ① 比較自己「慣用手 vs 非慣用手」的 5 次平均反應時間<br/>
+                ② 邀請家中長輩與自己分別測試「視覺變色反應」與「神槍手射擊反應」，比較不同年齡層的反應時間差異！</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dotsContainer = document.getElementById('slideDots');
+    const pageIndicator = document.getElementById('pageIndicator');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const fsBtn = document.getElementById('fsBtn');
+    let currentIndex = 0;
+
+    // Create dots
+    slides.forEach((_, idx) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (idx === 0 ? ' active' : '');
+      d.addEventListener('click', () => goToSlide(idx));
+      dotsContainer.appendChild(d);
+    });
+
+    function goToSlide(idx) {
+      currentIndex = Math.max(0, Math.min(slides.length - 1, idx));
+      slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
+      Array.from(dotsContainer.children).forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+      pageIndicator.textContent = `${currentIndex + 1} / ${slides.length}`;
+    }
+
+    prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
+    nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') goToSlide(currentIndex + 1);
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') goToSlide(currentIndex - 1);
+    });
+
+    fsBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    });
+
+    // Slide 4: Ruler Drop Free-fall Calculator (h = 1/2 g t^2 => t = sqrt(2h/g))
+    const rulerSlider = document.getElementById('rulerSlider');
+    const rulerCmText = document.getElementById('rulerCmText');
+    const rulerTimeText = document.getElementById('rulerTimeText');
+
+    function updateRulerCalc() {
+      const cm = parseFloat(rulerSlider.value);
+      const m = cm / 100;
+      const tSec = Math.sqrt((2 * m) / 9.8);
+      const tMs = Math.round(tSec * 1000);
+      rulerCmText.textContent = `${cm} cm`;
+      rulerTimeText.textContent = `${tSec.toFixed(3)} 秒 (${tMs} ms)`;
+    }
+    rulerSlider.addEventListener('input', updateRulerCalc);
+
+    // Slide 9: Traffic Safety Reaction Distance Calculator
+    const speedSlider = document.getElementById('speedSlider');
+    const rtSlider = document.getElementById('rtSlider');
+    const speedValText = document.getElementById('speedValText');
+    const rtValText = document.getElementById('rtValText');
+    const brakeDistText = document.getElementById('brakeDistText');
+
+    function updateBrakeCalc() {
+      const kmh = parseFloat(speedSlider.value);
+      const rtMs = parseFloat(rtSlider.value);
+      const mps = kmh / 3.6;
+      const dist = mps * (rtMs / 1000);
+      speedValText.textContent = `${kmh} km/h`;
+      rtValText.textContent = `${rtMs} ms (${(rtMs / 1000).toFixed(2)}s)`;
+      brakeDistText.textContent = `${dist.toFixed(2)} 公尺`;
+    }
+    speedSlider.addEventListener('input', updateBrakeCalc);
+    rtSlider.addEventListener('input', updateBrakeCalc);
+  </script>
+</body>
+</html>
